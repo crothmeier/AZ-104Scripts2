@@ -1,0 +1,20 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: Azure/setup-azcli@v3
+      - name: Validate Bicep
+        run: |
+          find modules -name '*.bicep' -print0 | xargs -0 -n1 az bicep build --stdout
+      - name: PSScriptAnalyzer
+        uses: microsoft/psscriptanalyzer-action@v1
+      - name: ShellCheck
+        uses: ludeeus/action-shellcheck@master

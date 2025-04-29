@@ -1,0 +1,20 @@
+# Connection Verification from Test VM inside the VNet
+
+## DNS Lookup shows private IP resolution
+$ nslookup mystorageacct.blob.core.windows.net
+Server:         10.0.0.4
+Address:        10.0.0.4#53
+
+Non-authoritative answer:
+Name:   mystorageacct.blob.core.windows.net
+Address: 10.0.1.5    # RFC-1918 private address
+
+## Test blob access
+$ az storage blob list --account-name mystorageacct --container-name mycontainer --output table
+Name             Blob Type    Blob Tier    Length    Content Type    Last Modified
+---------------  -----------  -----------  --------  --------------  -------------------------
+example.txt      BlockBlob    Hot          24        text/plain      2025-04-28T20:45:19+00:00
+
+## Outside VNet test (fails as expected)
+$ az storage blob list --account-name mystorageacct --container-name mycontainer --output table
+ERROR: This request is not authorized to perform this operation.
